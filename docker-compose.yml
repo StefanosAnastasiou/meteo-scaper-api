@@ -1,0 +1,38 @@
+version: '3.1'
+services:
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx:/etc/nginx/conf.d/
+    command: ['nginx', '-g', 'daemon off;']
+    depends_on:
+      - meteo
+  database:
+    image: mysql:latest
+    restart: on-failure
+    container_name: database
+    volumes:
+      - ./sql-init:/docker-entrypoint-initdb.d
+      - /home/weather-data/:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: 'weatherDB'
+      MYSQL_ROOT_PASSWORD: 'password'
+      MYSQL_PASSWORD: 'password'
+    ports:
+      - 3308:3306
+    command: ['mysqld', '--character-set-client-handshake=FALSE', '--character-set-server=utf8', '--collation-server=utf8_general_ci']
+  meteo:
+    image: meteo-scraper-api:latest
+    container_name: meteo
+    environment:
+      DATABASE_USERNAME: 'root'
+      DATABASE_PASSWORD: 'password'
+    ports:
+      - 8087:8087
+    depends_on:
+      - database
+    restart: on-failure
