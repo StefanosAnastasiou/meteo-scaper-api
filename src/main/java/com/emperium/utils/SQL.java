@@ -286,7 +286,7 @@ public class SQL {
         try{
             tx = session.beginTransaction();
             String hql = "DELETE FROM Measurement WHERE day_id BETWEEN (SELECT id FROM Day WHERE city_id=:city_id AND day < current_date ORDER BY id ASC LIMIT 1)" +
-                    " AND (SELECT id FROM Day WHERE city_id=city_id AND day < current_date ORDER BY id DESC LIMIT 1)";
+                    " AND (SELECT id FROM Day WHERE city_id=:city_id AND day < current_date ORDER BY id DESC LIMIT 1)";
             Query query = session.createSQLQuery(hql);
             query.setParameter("city_id", city_id);
             query.executeUpdate();
@@ -342,24 +342,40 @@ public class SQL {
      */
     public void insertByCityId(Day day, City city) {
         Session session = this.sessFactory.openSession();
-        Transaction tx = session.beginTransaction();
-        day.setCity(city);
-        city.getDays().add(day);
-        session.save(day);
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            day.setCity(city);
+            session.save(day);
+            commitTransaction(tx);
+        } catch (Exception e) {
+            e.printStackTrace();
+            if(tx != null) tx.rollback();
+        } finally {
+            session.close();
+        }
 
-        commitTransaction(tx);
-        session.close();
     }
 
     /**
      * Gets a City entity by id.
      *
-     * @param id the city id.
+     * @param city_id the city id.
      * @return the City entity
      */
-    public City getCityById(int id) {
+    public City getCityById(int city_id) {
         Session session = this.sessFactory.openSession();
-        City city = session.get(City.class, id);
+        City city = null;
+        try{
+            session = this.sessFactory.openSession();
+            city = session.load(City.class, city_id);
+        }catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            if(session != null && session.isOpen()) {
+                session.close();
+            }
+        }
 
         return city;
     }

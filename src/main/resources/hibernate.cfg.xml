@@ -15,11 +15,14 @@
 
         <!-- c3po configuration -->
         <property name = "c3p0.timeout">10</property>
-        <property name = "hibernate.c3po.min_size">5</property>
-        <property name = "hibernate.c3po.max_size">20</property>
-        <property name = "hibernate.c3po.timeout">300</property>
+        <property name = "hibernate.c3po.min_size">501</property>
+        <property name = "hibernate.c3po.max_size">501</property>
+        <property name = "hibernate.c3p0.acquire_increment">502</property>
+        <property name = "hibernate.c3po.timeout">180</property>
         <property name = "hibernate.c3po.max_statements">50</property>
-        <property name = "hibernate.c3po.idle_test_period">3000</property>
+        <!-- Use for debugging -->
+        <!--<property name="hibernate.c3p0.unreturnedConnectionTimeout">10</property>-->
+        <!--<property name="hibernate.c3p0.debugUnreturnedConnectionStackTraces">true</property>-->
 
         <!-- mapping classes -->
         <mapping class ="com.emperium.model.City"/>
