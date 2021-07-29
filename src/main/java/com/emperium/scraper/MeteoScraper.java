@@ -12,6 +12,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.SchedulerException;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -44,28 +45,30 @@ public class MeteoScraper implements Job {
         startJob();
     }
 
-    public void initScrapingAndSave() {
+    public void initiate() {
         Mappings.cityMappings.keySet()
                 .stream()
-                .forEach(ck -> {
+                .forEach(ck ->initScrapingAndSave(ck));
+    }
+
+    public void initScrapingAndSave(int ck) {
                     try {
                         cityScraper = new CityScraper(ck);
                         cityScraper.scrapeCity();
 
                         this.ct = cityScraper.getCity();
 
-
-                        if(cityDAO.cityIsSet(this.ct.getName())) {
+                        if(cityIsSet(this.ct.getName())) {
                             this.ORMDays = new ArrayList<>();
                             this.city_id = cityDAO.getCityId(this.ct.getName());
 
                             ct.days.stream().forEach(domainDay -> {
                                          this.ORMMeasurements = new ArrayList<>();
 
-                                         if(dayDAO.dayIsSet(domainDay.getDate(), this.city_id)) {
+                                if(dayIsSet(domainDay.getDate(), this.city_id)) {
                                              int day_id = dayDAO.getDayId(domainDay.getDate(), this.city_id);
 
-                                             if (measurementsDAO.measurementsAreSet(day_id)) {
+                                         if (dailyMeasurementsAreSet(day_id)) {
                                                  measurementsDAO.checkAndUpdateDailyMeasurement(day_id, domainDay.measurements);
                                              } else {
                                                  measurementsDAO.setDailyMeasurements(domainDay.measurements, day_id);
@@ -75,7 +78,7 @@ public class MeteoScraper implements Job {
                                               insertRecords(true, domainDay);
                                          }
                             });
-                            deletePreviousMeasurements(city_id);
+                            deletePreviousMeasurements(this.city_id);
                             deletePreviousDays(this.city_id);
                             this.domainDays.clear();
                         } else {
@@ -84,7 +87,18 @@ public class MeteoScraper implements Job {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                });
+    }
+
+    public boolean cityIsSet(String city) {
+        return cityDAO.cityIsSet(city);
+    }
+
+    public boolean dayIsSet(LocalDate date, int city_id) {
+        return dayDAO.dayIsSet(date, city_id);
+    }
+
+    public boolean dailyMeasurementsAreSet(int day_id) {
+        return measurementsDAO.measurementsAreSet(day_id);
     }
 
     private void fillDays(int day_id) {
@@ -160,7 +174,7 @@ public class MeteoScraper implements Job {
                     .forEach(job -> {
                         if (job.getJobDetail().getKey().getName().equals(ScrapeScheduler.SCRAPE_CITY_JOB)) {
                             try {
-                                initScrapingAndSave();
+                                initiate();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
