@@ -58,9 +58,7 @@ public class MeteoScraper implements Job {
 
                         this.ct = cityScraper.getCity();
 
-
                         if(cityIsSet(this.ct.getName())) {
-//                        if(cityDAO.cityIsSet(this.ct.getName())) {
                             this.ORMDays = new ArrayList<>();
                             this.city_id = cityDAO.getCityId(this.ct.getName());
 
@@ -68,11 +66,9 @@ public class MeteoScraper implements Job {
                                          this.ORMMeasurements = new ArrayList<>();
 
                                 if(dayIsSet(domainDay.getDate(), this.city_id)) {
-//                                         if(dayDAO.dayIsSet(domainDay.getDate(), this.city_id)) {
                                              int day_id = dayDAO.getDayId(domainDay.getDate(), this.city_id);
 
                                          if (dailyMeasurementsAreSet(day_id)) {
-                                             //if (measurementsDAO.measurementsAreSet(day_id)) {
                                                  measurementsDAO.checkAndUpdateDailyMeasurement(day_id, domainDay.measurements);
                                              } else {
                                                  measurementsDAO.setDailyMeasurements(domainDay.measurements, day_id);
@@ -178,7 +174,7 @@ public class MeteoScraper implements Job {
                     .forEach(job -> {
                         if (job.getJobDetail().getKey().getName().equals(ScrapeScheduler.SCRAPE_CITY_JOB)) {
                             try {
-                                init();
+                                initiate();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
