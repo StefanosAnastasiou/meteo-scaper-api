@@ -15,6 +15,9 @@ import org.quartz.SchedulerException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiPredicate;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 
 public class MeteoScraper implements Job {
@@ -29,14 +32,9 @@ public class MeteoScraper implements Job {
 
     private CityDAO cityDAO = new CityDAOImpl();
     private DayDAO dayDAO = new DayDAOImpl();
-    private MeasurementDAO measurementsDAO = new MeasurementDaoImp();
-
-    private List<Day> ORMDays;
-    private List<Measurement> ORMMeasurements;
+    private MeasurementDAO measurementsDAO = new MeasurementDaoImpl();
 
     private int city_id;
-
-    List<Integer> domainDays = new ArrayList<>();
 
     private com.emperium.domain.City ct;
 
@@ -45,87 +43,65 @@ public class MeteoScraper implements Job {
         startJob();
     }
 
-    public void initiate() {
+    private void initiate() {
         Mappings.cityMappings.keySet()
                 .stream()
-                .forEach(ck ->initScrapingAndSave(ck));
+                .forEach( c -> scrapeAndSave(c));
     }
 
-    public void initScrapingAndSave(int ck) {
-                    try {
-                        cityScraper = new CityScraper(ck);
-                        cityScraper.scrapeCity();
+    private void scrapeAndSave(int ck) {
+        try {
+            cityScraper = new CityScraper(ck);
+            cityScraper.scrapeCity();
 
-                        this.ct = cityScraper.getCity();
+            ct = cityScraper.getCity();
 
-                        if(cityIsSet(this.ct.getName())) {
-                            this.ORMDays = new ArrayList<>();
-                            this.city_id = cityDAO.getCityId(this.ct.getName());
+            if(cityIsSet.test(ct.getName())) {
+                city_id = cityDAO.getCityId(ct.getName());
 
-                            ct.days.stream().forEach(domainDay -> {
-                                         this.ORMMeasurements = new ArrayList<>();
+                ct.days.stream().forEach(domainDay -> {
 
-                                if(dayIsSet(domainDay.getDate(), this.city_id)) {
-                                             int day_id = dayDAO.getDayId(domainDay.getDate(), this.city_id);
+                    if(dayIsSet.test(domainDay.getDate(), city_id)) {
+                        int day_id = dayDAO.getDayId(domainDay.getDate(), city_id);
 
-                                         if (dailyMeasurementsAreSet(day_id)) {
-                                                 measurementsDAO.checkAndUpdateDailyMeasurement(day_id, domainDay.measurements);
-                                             } else {
-                                                 measurementsDAO.setDailyMeasurements(domainDay.measurements, day_id);
-                                             }
-                                             fillDays(day_id);
-                                         } else {
-                                              insertRecords(true, domainDay);
-                                         }
-                            });
-                            deletePreviousMeasurements(this.city_id);
-                            deletePreviousDays(this.city_id);
-                            this.domainDays.clear();
+                        if (dailyMeasurementsAreSet.test(day_id)) {
+                            measurementsDAO.checkAndUpdateDailyMeasurement(day_id, domainDay.measurements);
                         } else {
-                             insertRecords(false, null);
+                            measurementsDAO.setDailyMeasurements(domainDay.measurements, day_id);
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } else {
+                        insertRecords(true, domainDay);
                     }
+                });
+                deletePreviousMeasurements.accept(city_id);
+                deletePreviousDays.accept(city_id);
+            } else {
+                insertRecords(false, null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public boolean cityIsSet(String city) {
-        return cityDAO.cityIsSet(city);
-    }
+    public Predicate<String> cityIsSet = city -> cityDAO.cityIsSet(city);
 
-    public boolean dayIsSet(LocalDate date, int city_id) {
-        return dayDAO.dayIsSet(date, city_id);
-    }
+    public BiPredicate<LocalDate, Integer> dayIsSet = (date, city_id) -> dayDAO.dayIsSet(date, city_id);
 
-    public boolean dailyMeasurementsAreSet(int day_id) {
-        return measurementsDAO.measurementsAreSet(day_id);
-    }
+    public Predicate<Integer> dailyMeasurementsAreSet = day_id -> measurementsDAO.measurementsAreSet(day_id);
 
-    private void fillDays(int day_id) {
-        this.domainDays.add(day_id);
-    }
+    private Consumer<Integer> deletePreviousMeasurements = city_id -> measurementsDAO.deleteByCityId(city_id);
 
-    private void deletePreviousMeasurements(int city_id) {
-        measurementsDAO.deleteByCityId(city_id);
-    }
-
-    private void deletePreviousDays( int city_id) {
-        dayDAO.deleteById(city_id);
-    }
+    private Consumer<Integer> deletePreviousDays = city_id -> dayDAO.deleteById(city_id);
 
     private void insertRecords(boolean cityExists, com.emperium.domain.Day day) {
 
         if(cityExists) {
-            this.ORMDays = new ArrayList<>();
             City city = cityDAO.getCityById(this.city_id);
 
-            modelDay = adapter.domainDayToModelAdapter(day, new Day(), new ArrayList<Measurement>());
-
-            this.ORMMeasurements = new ArrayList<>();
+            modelDay = adapter.domainDayToModelAdapter(day, new Day(), new ArrayList<>());
 
             day.measurements.stream().forEach(ms -> {
                 modelMeasurements = adapter.domainMeasurementsToModelAdapter(ms, new Measurement());
-                this.ORMMeasurements.add(modelMeasurements);
 
                 modelMeasurements.setDay(modelDay);
                 modelDay.getMeasurements().add(modelMeasurements);
@@ -134,23 +110,24 @@ public class MeteoScraper implements Job {
             dayDAO.insertRecords(modelDay, city);
 
         } else {
-            this.ORMDays = new ArrayList<>();
-            this.ct.days.stream().forEach(domainDay -> {
-                this.ORMMeasurements = new ArrayList<>();
+            List<Day> ORMDays = new ArrayList<>();
+
+            ct.days.stream().forEach(domainDay -> {
+                List<Measurement> ORMMeasurements = new ArrayList<>();
 
                 domainDay.measurements.stream().forEach(m -> {
                     modelMeasurements = adapter.domainMeasurementsToModelAdapter(m, new Measurement());
-                    this.ORMMeasurements.add(modelMeasurements);
+                    ORMMeasurements.add(modelMeasurements);
                 });
 
-                modelDay = adapter.domainDayToModelAdapter(domainDay, new Day(), this.ORMMeasurements);
-                this.ORMDays.add(modelDay);
+                modelDay = adapter.domainDayToModelAdapter(domainDay, new Day(), ORMMeasurements);
+                ORMDays.add(modelDay);
 
             });
-            modelCity  = adapter.domainCityToModelAdapter(this.ct, new City(), this.ORMDays);
+            modelCity  = adapter.domainCityToModelAdapter(ct, new City(), ORMDays);
 
             cityDAO.saveCity(modelCity);
-         }
+        }
     }
 
     private void startJob() throws SchedulerException {

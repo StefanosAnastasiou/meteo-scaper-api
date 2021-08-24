@@ -2,7 +2,7 @@ FROM alpine:latest
 
 RUN apk update && \
     apk upgrade && \
-    apk add --no-cache bash maven openjdk8
+    apk add --no-cache bash maven openjdk11
 
 RUN mkdir /app
 

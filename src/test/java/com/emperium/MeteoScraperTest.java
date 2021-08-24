@@ -86,7 +86,7 @@ public class MeteoScraperTest {
     @Test
     public void test_city_day_measurements_Not_set() {
         Mockito.when(cityDAO.cityIsSet("ΤΡΙΚΑΛΑ")).thenReturn(false);
-        boolean cityIsSet = scraper.cityIsSet("ΤΡΙΚΑΛΑ");
+        boolean cityIsSet = scraper.cityIsSet.test("ΤΡΙΚΑΛΑ");
 
         Assert.assertFalse("City should not be set.", cityIsSet);
 
@@ -105,8 +105,8 @@ public class MeteoScraperTest {
         Mockito.when(cityDAO.cityIsSet("ΤΡΙΚΑΛΑ")).thenReturn(true);
         Mockito.when(dayDAO.dayIsSet(LocalDate.of(2021, 07,07), 54)).thenReturn(false);
 
-        boolean cityIsSet = scraper.cityIsSet("ΤΡΙΚΑΛΑ");
-        boolean dayIsSet = scraper.dayIsSet(LocalDate.of(2021, 07, 07), 54);
+        boolean cityIsSet = scraper.cityIsSet.test("ΤΡΙΚΑΛΑ");
+        boolean dayIsSet = scraper.dayIsSet.test(LocalDate.of(2021, 07, 07), 54);
 
         Assert.assertTrue("City should be set.", cityIsSet);
         Assert.assertFalse("Day should not be set.", dayIsSet);
@@ -122,9 +122,9 @@ public class MeteoScraperTest {
         Mockito.when(dayDAO.dayIsSet(LocalDate.of(2021, 07, 07), 1)).thenReturn(true);
         Mockito.when(measurementDAO.measurementsAreSet(1)).thenReturn(true);
 
-        boolean cityExists = scraper.cityIsSet("ΘΕΣΣΑΛΟΝΙΚΗ");
-        boolean dayExists = scraper.dayIsSet(LocalDate.of(2021, 07, 07), 1);
-        boolean dailyMeasurementsAreSet = scraper.dailyMeasurementsAreSet(1);
+        boolean cityExists = scraper.cityIsSet.test("ΘΕΣΣΑΛΟΝΙΚΗ");
+        boolean dayExists = scraper.dayIsSet.test(LocalDate.of(2021, 07, 07), 1);
+        boolean dailyMeasurementsAreSet = scraper.dailyMeasurementsAreSet.test(1);
 
         Assert.assertTrue("City should be set.", cityExists);
         Assert.assertTrue("Day should be set.", dayExists);
@@ -141,9 +141,9 @@ public class MeteoScraperTest {
         Mockito.when(dayDAO.dayIsSet(LocalDate.of(2021, 07, 07), 2)).thenReturn(true);
         Mockito.when(measurementDAO.measurementsAreSet(2)).thenReturn(false);
 
-        boolean cityExists = scraper.cityIsSet("ΚΑΒΑΛΑ");
-        boolean dayExists = scraper.dayIsSet(LocalDate.of(2021, 07, 07), 2);
-        boolean dailyMeasurementsAreSet = scraper.dailyMeasurementsAreSet(2);
+        boolean cityExists = scraper.cityIsSet.test("ΚΑΒΑΛΑ");
+        boolean dayExists = scraper.dayIsSet.test(LocalDate.of(2021, 07, 07), 2);
+        boolean dailyMeasurementsAreSet = scraper.dailyMeasurementsAreSet.test(2);
 
         Assert.assertTrue("City should be set.", cityExists);
         Assert.assertTrue("Day should be set.", dayExists);
