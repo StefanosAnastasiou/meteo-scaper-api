@@ -6,7 +6,7 @@ import com.emperium.utils.SQL;
 import java.util.List;
 
 
-public class MeasurementDaoImp implements MeasurementDAO {
+public class MeasurementDaoImpl implements MeasurementDAO {
 
     @Override
     public boolean measurementsAreSet(int day_id) {
