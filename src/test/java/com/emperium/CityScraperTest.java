@@ -29,24 +29,24 @@ public class CityScraperTest {
     public void test_measurement_data_with_holidays_1() throws Exception {
         CityScraper testCityData = getScraperTestData("Trikala-halloween-2021.html");
 
-        Assert.assertEquals("First measurement of first day should be at 20:00 ", testCityData.city.days.get(0).measurements.get(0).eventTime, LocalTime.parse("20:00"));
-        Assert.assertEquals("Third measurement of second day should be at 08:00", testCityData.city.days.get(1).measurements.get(2).eventTime, LocalTime.parse("08:00"));
-        Assert.assertEquals("Humidity at 11:00 on second day should be 47", testCityData.city.days.get(1).measurements.get(3).humidity, Integer.valueOf(47));
-        Assert.assertEquals("Wind at 14:00 on second day should be \'2 Μπφ Α\' ", testCityData.city.days.get(1).measurements.get(4).wind, "2 Μπφ Α");
-        Assert.assertEquals("Phenomeno on the third day at 05:00 should be \'ΚΑΘΑΡΟΣ\'", testCityData.city.days.get(2).measurements.get(1).phenomeno, "ΑΡΑΙΗ ΣΥΝΝΕΦΙΑ");
-        Assert.assertEquals("Phenomeno at 02:00 on the last day should be \'ΑΣΘΕΝΗΣ ΒΡΟΧΗ\'", testCityData.city.days.get(6).measurements.get(0).phenomeno, "ΑΣΘΕΝΗΣ ΒΡΟΧΗ");
+        Assert.assertEquals("First measurement of first day should be at 20:00 ", testCityData.city.getDays().get(0).getMeasurements().get(0).getEventTime(), LocalTime.parse("20:00"));
+        Assert.assertEquals("Third measurement of second day should be at 08:00", testCityData.city.getDays().get(1).getMeasurements().get(2).getEventTime(), LocalTime.parse("08:00"));
+        Assert.assertEquals("Humidity at 11:00 on second day should be 47", testCityData.city.getDays().get(1).getMeasurements().get(3).getHumidity(), Integer.valueOf(47));
+        Assert.assertEquals("Wind at 14:00 on second day should be \'2 Μπφ Α\' ", testCityData.city.getDays().get(1).getMeasurements().get(4).getWind(), "2 Μπφ Α");
+        Assert.assertEquals("Phenomeno on the third day at 05:00 should be \'ΚΑΘΑΡΟΣ\'", testCityData.city.getDays().get(2).getMeasurements().get(1).getPhenomeno(), "ΑΡΑΙΗ ΣΥΝΝΕΦΙΑ");
+        Assert.assertEquals("Phenomeno at 02:00 on the last day should be \'ΑΣΘΕΝΗΣ ΒΡΟΧΗ\'", testCityData.city.getDays().get(6).getMeasurements().get(0).getPhenomeno(), "ΑΣΘΕΝΗΣ ΒΡΟΧΗ");
     }
 
     @Test
     public void test_measurement_data_with_holidays_2() throws Exception {
         CityScraper testCity = getScraperTestData("Trikala_weather_with_holidays_1st_measur_21:00.html");
 
-        Assert.assertEquals("First measurement of first day should be at 21:00 ", testCity.city.days.get(0).measurements.get(0).eventTime, LocalTime.parse("21:00"));
-        Assert.assertEquals("Second measurement of second day should be at 06:00", testCity.city.days.get(1).measurements.get(1).eventTime, LocalTime.parse("06:00"));
-        Assert.assertEquals("Humidity at 03:00 on second day should be 85", testCity.city.days.get(1).measurements.get(0).humidity, Integer.valueOf(85));
-        Assert.assertEquals("Wind at 15:00 on second day should be \'3 Μπφ Α\' ", testCity.city.days.get(1).measurements.get(4).wind, "3 Μπφ Α");
-        Assert.assertEquals("Phenomeno on the third day at 06:00 should be \'ΚΑΘΑΡΟΣ\'", testCity.city.days.get(2).measurements.get(1).phenomeno, "ΚΑΘΑΡΟΣ");
-        Assert.assertEquals("Phenomeno at 03:00 on the last day should be \'ΑΡΑΙΗ ΣΥΝΝΕΦΙΑ\'", testCity.city.days.get(6).measurements.get(0).phenomeno, "ΑΡΑΙΗ ΣΥΝΝΕΦΙΑ");
+        Assert.assertEquals("First measurement of first day should be at 21:00 ", testCity.city.getDays().get(0).getMeasurements().get(0).getEventTime(), LocalTime.parse("21:00"));
+        Assert.assertEquals("Second measurement of second day should be at 06:00", testCity.city.getDays().get(1).getMeasurements().get(1).getEventTime(), LocalTime.parse("06:00"));
+        Assert.assertEquals("Humidity at 03:00 on second day should be 85", testCity.city.getDays().get(1).getMeasurements().get(0).getHumidity(), Integer.valueOf(85));
+        Assert.assertEquals("Wind at 15:00 on second day should be \'3 Μπφ Α\' ", testCity.city.getDays().get(1).getMeasurements().get(4).getWind(), "3 Μπφ Α");
+        Assert.assertEquals("Phenomeno on the third day at 06:00 should be \'ΚΑΘΑΡΟΣ\'", testCity.city.getDays().get(2).getMeasurements().get(1).getPhenomeno(), "ΚΑΘΑΡΟΣ");
+        Assert.assertEquals("Phenomeno at 03:00 on the last day should be \'ΑΡΑΙΗ ΣΥΝΝΕΦΙΑ\'", testCity.city.getDays().get(6).getMeasurements().get(0).getPhenomeno(), "ΑΡΑΙΗ ΣΥΝΝΕΦΙΑ");
     }
 
     @Test
@@ -87,12 +87,12 @@ public class CityScraperTest {
 
         cityScraper.setCityDays(datesList);
         cityScraper.setDailyMeasurements(timeList, tempList, humidityList, windList, phenomenoList);
-        Assert.assertEquals("First measurement of first day should be at 21:00 ", cityScraper.city.days.get(0).measurements.get(0).eventTime, LocalTime.parse("21:00"));
-        Assert.assertEquals("Second measurement of second day should be at 06:00", cityScraper.city.days.get(1).measurements.get(1).eventTime, LocalTime.parse("06:00"));
-        Assert.assertEquals("Humidity at 03:00 on second day should be 65", cityScraper.city.days.get(1).measurements.get(0).humidity, Integer.valueOf(65));
-        Assert.assertEquals("Wind at 15:00 on second day should be \'1 Μπφ ΝΑ\' ", cityScraper.city.days.get(1).measurements.get(4).wind, "1 Μπφ NA");
-        Assert.assertEquals("Phenomeno on the third day at 06:00 should be \'ΚΑΘΑΡΟΣ\'", cityScraper.city.days.get(2).measurements.get(1).phenomeno, "ΚΑΘΑΡΟΣ");
-        Assert.assertEquals("Phenomeno at 03:00 on the last day should be \'ΑΡΑΙΗ ΣΥΝΝΕΦΙΑ\'", cityScraper.city.days.get(6).measurements.get(0).phenomeno, "ΑΡΑΙΗ ΣΥΝΝΕΦΙΑ");
+        Assert.assertEquals("First measurement of first day should be at 21:00 ", cityScraper.city.getDays().get(0).getMeasurements().get(0).getEventTime(), LocalTime.parse("21:00"));
+        Assert.assertEquals("Second measurement of second day should be at 06:00", cityScraper.city.getDays().get(1).getMeasurements().get(1).getEventTime(), LocalTime.parse("06:00"));
+        Assert.assertEquals("Humidity at 03:00 on second day should be 65", cityScraper.city.getDays().get(1).getMeasurements().get(0).getHumidity(), Integer.valueOf(65));
+        Assert.assertEquals("Wind at 15:00 on second day should be \'1 Μπφ ΝΑ\' ", cityScraper.city.getDays().get(1).getMeasurements().get(4).getWind(), "1 Μπφ NA");
+        Assert.assertEquals("Phenomeno on the third day at 06:00 should be \'ΚΑΘΑΡΟΣ\'", cityScraper.city.getDays().get(2).getMeasurements().get(1).getPhenomeno(), "ΚΑΘΑΡΟΣ");
+        Assert.assertEquals("Phenomeno at 03:00 on the last day should be \'ΑΡΑΙΗ ΣΥΝΝΕΦΙΑ\'", cityScraper.city.getDays().get(6).getMeasurements().get(0).getPhenomeno(), "ΑΡΑΙΗ ΣΥΝΝΕΦΙΑ");
     }
 
     @Test
@@ -109,7 +109,7 @@ public class CityScraperTest {
         List<LocalDate> datesList = cityScraper.zipDaymonthToLocaDate(daysToList, monthsToList );
         cityScraper.setCityDays(datesList);
 
-        Assert.assertEquals("A city must have measurements for 7 days.", cityScraper.city.days.size() , 7);
+        Assert.assertEquals("A city must have measurements for 7 days.", cityScraper.city.getDays().size() , 7);
     }
 
     @Test

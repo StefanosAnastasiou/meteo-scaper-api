@@ -19,7 +19,7 @@ import java.util.List;
 @Path("predictions")
 public class Resource {
 
-    private Logger logger = Logger.getLogger(Resource.class);
+    private final Logger logger = Logger.getLogger(Resource.class);
     private ObjectMapper objectMapper = new ObjectMapper();
     private ResourceDAO resource = new ResourceDAOImpl();
 

@@ -59,15 +59,15 @@ public class MeteoScraper implements Job {
             if(cityIsSet.test(ct.getName())) {
                 city_id = cityDAO.getCityId(ct.getName());
 
-                ct.days.stream().forEach(domainDay -> {
+                ct.getDays().stream().forEach(domainDay -> {
 
                     if(dayIsSet.test(domainDay.getDate(), city_id)) {
                         int day_id = dayDAO.getDayId(domainDay.getDate(), city_id);
 
                         if (dailyMeasurementsAreSet.test(day_id)) {
-                            measurementsDAO.checkAndUpdateDailyMeasurement(day_id, domainDay.measurements);
+                            measurementsDAO.checkAndUpdateDailyMeasurement(day_id, domainDay.getMeasurements());
                         } else {
-                            measurementsDAO.setDailyMeasurements(domainDay.measurements, day_id);
+                            measurementsDAO.setDailyMeasurements(domainDay.getMeasurements(), day_id);
                         }
                     } else {
                         insertRecords(true, domainDay);
@@ -100,7 +100,7 @@ public class MeteoScraper implements Job {
 
             modelDay = adapter.domainDayToModelAdapter(day, new Day(), new ArrayList<>());
 
-            day.measurements.stream().forEach(ms -> {
+            day.getMeasurements().stream().forEach(ms -> {
                 modelMeasurements = adapter.domainMeasurementsToModelAdapter(ms, new Measurement());
 
                 modelMeasurements.setDay(modelDay);
@@ -112,10 +112,10 @@ public class MeteoScraper implements Job {
         } else {
             List<Day> ORMDays = new ArrayList<>();
 
-            ct.days.stream().forEach(domainDay -> {
+            ct.getDays().stream().forEach(domainDay -> {
                 List<Measurement> ORMMeasurements = new ArrayList<>();
 
-                domainDay.measurements.stream().forEach(m -> {
+                domainDay.getMeasurements().stream().forEach(m -> {
                     modelMeasurements = adapter.domainMeasurementsToModelAdapter(m, new Measurement());
                     ORMMeasurements.add(modelMeasurements);
                 });
