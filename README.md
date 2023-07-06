@@ -28,7 +28,7 @@ from [Meteo](https://www.meteo.gr).
  
 ### Built With
 
-* [Java 8](https://java.com/en/download/faq/java8.xml)
+* [Java 11](https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html)
 * [Maven](https://maven.apache.org/)
 * [HtmlUnit](https://htmlunit.sourceforge.io/)
 * [Hibernate 5.4](https://hibernate.org/orm/releases/5.4/)

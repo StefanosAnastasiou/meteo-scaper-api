@@ -11,7 +11,8 @@ import java.util.List;
  */
 public class Adapter {
 
-    public com.emperium.model.City domainCityToModelAdapter(City domainCity, com.emperium.model.City modelCity, List<com.emperium.model.Day> days) {
+    public com.emperium.model.City domainCityToModelAdapter(City domainCity, List<com.emperium.model.Day> days) {
+        com.emperium.model.City modelCity = new com.emperium.model.City();
         modelCity.setName(domainCity.getName());
         modelCity.setDays(days);
 
