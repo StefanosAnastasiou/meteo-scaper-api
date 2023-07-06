@@ -47,24 +47,24 @@ public class MeteoScraperTest {
     @Before
     public void init() {
         this.domainDay = new Day(LocalDate.of(2021,07,07));
-        this.domainDay.measurements = new ArrayList<>();
+        this.domainDay.setMeasurements(new ArrayList<>());
 
         Measurement measurement1  = new Measurement();
-        measurement1.eventTime = LocalTime.of(03, 00);
-        measurement1.humidity = 56;
-        measurement1.phenomeno = "ΣΥΝΝΕΦΙΑ";
-        measurement1.wind = "2Μπφ";
-        measurement1.temperature = 25;
+        measurement1.setEventTime(LocalTime.of(03, 00));
+        measurement1.setHumidity(56);
+        measurement1.setPhenomeno("ΣΥΝΝΕΦΙΑ");
+        measurement1.setWind("2Μπφ");
+        measurement1.setTemperature(25);
 
         Measurement measurement2 = new Measurement();
-        measurement2.eventTime = LocalTime.of(06, 00);
-        measurement2.humidity = 60;
-        measurement2.phenomeno = "ΚΑΘΑΡΟΣ ΟΥΡΑΝΟΣ";
-        measurement2.wind = "1Μπφ";
-        measurement2.temperature = 24;
+        measurement2.setEventTime(LocalTime.of(06, 00));
+        measurement2.setHumidity(60);
+        measurement2.setPhenomeno("ΚΑΘΑΡΟΣ ΟΥΡΑΝΟΣ");
+        measurement2.setWind("1Μπφ");
+        measurement2.setTemperature(24);
 
-        this.domainDay.measurements.add(measurement1);
-        this.domainDay.measurements.add(measurement2);
+        this.domainDay.getMeasurements().add(measurement1);
+        this.domainDay.getMeasurements().add(measurement2);
 
         com.emperium.model.Measurement mMeasurement = new com.emperium.model.Measurement();
         mMeasurement.setHumidity(25);
@@ -111,9 +111,9 @@ public class MeteoScraperTest {
         Assert.assertTrue("City should be set.", cityIsSet);
         Assert.assertFalse("Day should not be set.", dayIsSet);
 
-        doNothing().when(measurementDAO).setDailyMeasurements(this.domainDay.measurements, 54);
-        measurementDAO.setDailyMeasurements(this.domainDay.measurements, 54);
-        verify(measurementDAO, times(1)).setDailyMeasurements(this.domainDay.measurements, 54);
+        doNothing().when(measurementDAO).setDailyMeasurements(this.domainDay.getMeasurements(), 54);
+        measurementDAO.setDailyMeasurements(this.domainDay.getMeasurements(), 54);
+        verify(measurementDAO, times(1)).setDailyMeasurements(this.domainDay.getMeasurements(), 54);
     }
 
     @Test
@@ -130,9 +130,9 @@ public class MeteoScraperTest {
         Assert.assertTrue("Day should be set.", dayExists);
         Assert.assertTrue("Daily measurements should be set.", dailyMeasurementsAreSet);
 
-        doNothing().when(measurementDAO).checkAndUpdateDailyMeasurement(1, this.domainDay.measurements);
-        measurementDAO.checkAndUpdateDailyMeasurement(1, this.domainDay.measurements);
-        verify(measurementDAO, times(1)).checkAndUpdateDailyMeasurement(1, this.domainDay.measurements);
+        doNothing().when(measurementDAO).checkAndUpdateDailyMeasurement(1, this.domainDay.getMeasurements());
+        measurementDAO.checkAndUpdateDailyMeasurement(1, this.domainDay.getMeasurements());
+        verify(measurementDAO, times(1)).checkAndUpdateDailyMeasurement(1, this.domainDay.getMeasurements());
     }
 
     @Test
@@ -149,8 +149,8 @@ public class MeteoScraperTest {
         Assert.assertTrue("Day should be set.", dayExists);
         Assert.assertFalse("Measurements should not be set.", dailyMeasurementsAreSet);
 
-        doNothing().when(measurementDAO).setDailyMeasurements(this.domainDay.measurements, 2);
-        measurementDAO.setDailyMeasurements(this.domainDay.measurements, 2);
-        verify(measurementDAO, times(1)).setDailyMeasurements(this.domainDay.measurements, 2);
+        doNothing().when(measurementDAO).setDailyMeasurements(this.domainDay.getMeasurements(), 2);
+        measurementDAO.setDailyMeasurements(this.domainDay.getMeasurements(), 2);
+        verify(measurementDAO, times(1)).setDailyMeasurements(this.domainDay.getMeasurements(), 2);
     }
 }

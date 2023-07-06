@@ -20,9 +20,9 @@ import java.util.stream.IntStream;
 
 public class CityScraper {
 
-    private Logger logger = Logger.getLogger(CityScraper.class);
+    private final Logger logger = Logger.getLogger(CityScraper.class);
 
-    private Calendar now;
+    private final Calendar now;
 
     private static final String SERVICE_URL = "https://www.meteo.gr/cf.cfm?city_id=";
 
@@ -177,7 +177,7 @@ public class CityScraper {
 
     public void setCityDays(List<LocalDate> days) {
         days.stream()
-                .forEach(evtd -> city.days.add(new Day(evtd)));
+                .forEach(evtd -> city.getDays().add(new Day(evtd)));
     }
 
     public City getCity() {
@@ -221,7 +221,7 @@ public class CityScraper {
         /** If scraping starts after at the first measurement of the day. **/
         if (getTimeMappingIndex(foreCastTimeValues) == 0) {
             int index = 0;
-            for (int i = 0; i < city.days.size(); i++) {
+            for (int i = 0; i < city.getDays().size(); i++) {
                 for (int k = 0; k < Mappings.summerTimeMappings.size(); k++) {
                     if (index == foreCastTimeValues.size()) {
                         break;
@@ -242,7 +242,7 @@ public class CityScraper {
             }
 
             int nextDayMeasurementIndex = Mappings.summerTimeMappings.size() - getTimeMappingIndex(foreCastTimeValues);
-            for (int i = 1; i < city.days.size(); i++) {
+            for (int i = 1; i < city.getDays().size(); i++) {
                 for (int j = 0; j < 8; j++) {
                     if (nextDayMeasurementIndex == foreCastTimeValues.size()) {
                         break;
@@ -260,13 +260,13 @@ public class CityScraper {
     public void setDailyMeasurementData(int cityIndex, int j, int nextDatMeasurementIndex, List<LocalTime> forecastTime,
                                          List<Integer> forecastTemperature, List<Integer> forecastHumid,
                                          List<String> forecastWind, List<String> forecastPhenomeno) {
-        city.days.get(cityIndex).measurements.add(new Measurement());
+        city.getDays().get(cityIndex).getMeasurements().add(new Measurement());
 
-        city.days.get(cityIndex).measurements.get(j).eventTime = forecastTime.get(nextDatMeasurementIndex);
-        city.days.get(cityIndex).measurements.get(j).temperature = forecastTemperature.get(nextDatMeasurementIndex);
-        city.days.get(cityIndex).measurements.get(j).humidity = forecastHumid.get(nextDatMeasurementIndex);
-        city.days.get(cityIndex).measurements.get(j).wind = forecastWind.get(nextDatMeasurementIndex);
-        city.days.get(cityIndex).measurements.get(j).phenomeno = forecastPhenomeno.get(nextDatMeasurementIndex);
+        city.getDays().get(cityIndex).getMeasurements().get(j).setEventTime(forecastTime.get(nextDatMeasurementIndex));
+        city.getDays().get(cityIndex).getMeasurements().get(j).setTemperature(forecastTemperature.get(nextDatMeasurementIndex));
+        city.getDays().get(cityIndex).getMeasurements().get(j).setHumidity(forecastHumid.get(nextDatMeasurementIndex));
+        city.getDays().get(cityIndex).getMeasurements().get(j).setWind(forecastWind.get(nextDatMeasurementIndex));
+        city.getDays().get(cityIndex).getMeasurements().get(j).setPhenomeno(forecastPhenomeno.get(nextDatMeasurementIndex));
     }
 
     public LocalDate stringToLocalDate(String day) throws ParseException {

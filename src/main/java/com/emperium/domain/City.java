@@ -6,7 +6,7 @@ import java.util.List;
 public class City {
 
     private String name;
-    public List<Day> days;
+    private List<Day> days;
 
     public City(String name) {
         this.name = name;
@@ -19,5 +19,13 @@ public class City {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Day> getDays() {
+        return days;
+    }
+
+    public void setDays(List<Day> days) {
+        this.days = days;
     }
 }

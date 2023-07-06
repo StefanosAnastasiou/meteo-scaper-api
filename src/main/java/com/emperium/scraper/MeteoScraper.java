@@ -23,10 +23,8 @@ import java.util.logging.Level;
 public class MeteoScraper implements Job {
 
     private Adapter adapter = new Adapter();
-    private CityScraper cityScraper;
     private Logger logger = Logger.getLogger(ScrapeScheduler.class);
 
-    private City modelCity;
     private Day modelDay;
     private Measurement modelMeasurements;
 
@@ -45,13 +43,12 @@ public class MeteoScraper implements Job {
 
     private void initiate() {
         Mappings.cityMappings.keySet()
-                .stream()
-                .forEach( c -> scrapeAndSave(c));
+                .forEach(this::scrapeAndSave);
     }
 
     private void scrapeAndSave(int ck) {
         try {
-            cityScraper = new CityScraper(ck);
+            CityScraper cityScraper = new CityScraper(ck);
             cityScraper.scrapeCity();
 
             ct = cityScraper.getCity();
@@ -59,15 +56,15 @@ public class MeteoScraper implements Job {
             if(cityIsSet.test(ct.getName())) {
                 city_id = cityDAO.getCityId(ct.getName());
 
-                ct.days.stream().forEach(domainDay -> {
+                ct.getDays().forEach(domainDay -> {
 
                     if(dayIsSet.test(domainDay.getDate(), city_id)) {
                         int day_id = dayDAO.getDayId(domainDay.getDate(), city_id);
 
                         if (dailyMeasurementsAreSet.test(day_id)) {
-                            measurementsDAO.checkAndUpdateDailyMeasurement(day_id, domainDay.measurements);
+                            measurementsDAO.checkAndUpdateDailyMeasurement(day_id, domainDay.getMeasurements());
                         } else {
-                            measurementsDAO.setDailyMeasurements(domainDay.measurements, day_id);
+                            measurementsDAO.setDailyMeasurements(domainDay.getMeasurements(), day_id);
                         }
                     } else {
                         insertRecords(true, domainDay);
@@ -100,7 +97,7 @@ public class MeteoScraper implements Job {
 
             modelDay = adapter.domainDayToModelAdapter(day, new Day(), new ArrayList<>());
 
-            day.measurements.stream().forEach(ms -> {
+            day.getMeasurements().forEach(ms -> {
                 modelMeasurements = adapter.domainMeasurementsToModelAdapter(ms, new Measurement());
 
                 modelMeasurements.setDay(modelDay);
@@ -112,10 +109,10 @@ public class MeteoScraper implements Job {
         } else {
             List<Day> ORMDays = new ArrayList<>();
 
-            ct.days.stream().forEach(domainDay -> {
+            ct.getDays().forEach(domainDay -> {
                 List<Measurement> ORMMeasurements = new ArrayList<>();
 
-                domainDay.measurements.stream().forEach(m -> {
+                domainDay.getMeasurements().forEach(m -> {
                     modelMeasurements = adapter.domainMeasurementsToModelAdapter(m, new Measurement());
                     ORMMeasurements.add(modelMeasurements);
                 });
@@ -124,7 +121,7 @@ public class MeteoScraper implements Job {
                 ORMDays.add(modelDay);
 
             });
-            modelCity  = adapter.domainCityToModelAdapter(ct, new City(), ORMDays);
+            City modelCity = adapter.domainCityToModelAdapter(ct, ORMDays);
 
             cityDAO.saveCity(modelCity);
         }
@@ -147,7 +144,6 @@ public class MeteoScraper implements Job {
         try {
             ScrapeScheduler.scheduler
                     .getCurrentlyExecutingJobs()
-                    .stream()
                     .forEach(job -> {
                         if (job.getJobDetail().getKey().getName().equals(ScrapeScheduler.SCRAPE_CITY_JOB)) {
                             try {

@@ -11,7 +11,8 @@ import java.util.List;
  */
 public class Adapter {
 
-    public com.emperium.model.City domainCityToModelAdapter(City domainCity, com.emperium.model.City modelCity, List<com.emperium.model.Day> days) {
+    public com.emperium.model.City domainCityToModelAdapter(City domainCity, List<com.emperium.model.Day> days) {
+        com.emperium.model.City modelCity = new com.emperium.model.City();
         modelCity.setName(domainCity.getName());
         modelCity.setDays(days);
 
@@ -19,18 +20,18 @@ public class Adapter {
     }
 
     public com.emperium.model.Day domainDayToModelAdapter(Day domainDay, com.emperium.model.Day modelDay, List<com.emperium.model.Measurement> measurements) {
-        modelDay.setDay(domainDay.date);
+        modelDay.setDay(domainDay.getDate());
         modelDay.setMeasurements(measurements);
 
         return modelDay;
     }
 
     public com.emperium.model.Measurement domainMeasurementsToModelAdapter(Measurement domainMeasure, com.emperium.model.Measurement modelMeasure) {
-        modelMeasure.setTemperature(domainMeasure.temperature);
-        modelMeasure.setHumidity(domainMeasure.humidity);
-        modelMeasure.setWind(domainMeasure.wind);
-        modelMeasure.setTime(domainMeasure.eventTime);
-        modelMeasure.setPhenomeno(domainMeasure.phenomeno);
+        modelMeasure.setTemperature(domainMeasure.getTemperature());
+        modelMeasure.setHumidity(domainMeasure.getHumidity());
+        modelMeasure.setWind(domainMeasure.getWind());
+        modelMeasure.setTime(domainMeasure.getEventTime());
+        modelMeasure.setPhenomeno(domainMeasure.getPhenomeno());
 
         return modelMeasure;
     }

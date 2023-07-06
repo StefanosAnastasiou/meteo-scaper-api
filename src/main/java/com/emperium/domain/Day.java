@@ -6,8 +6,8 @@ import java.util.List;
 
 public class Day {
 
-    public LocalDate date;
-    public List<Measurement> measurements;
+    private LocalDate date;
+    private List<Measurement> measurements;
 
     public Day(LocalDate date) {
         this.date = date;
@@ -20,5 +20,13 @@ public class Day {
 
     public void setDate(LocalDate date){
         this.date = date;
+    }
+
+    public List<Measurement> getMeasurements() {
+        return measurements;
+    }
+
+    public void setMeasurements(List<Measurement> measurements) {
+        this.measurements = measurements;
     }
 }

@@ -4,11 +4,11 @@ import java.time.LocalTime;
 
 public class Measurement {
 
-        public LocalTime eventTime;
-        public Integer temperature;
-        public Integer humidity;
-        public String wind;
-        public String phenomeno;
+        private LocalTime eventTime;
+        private Integer temperature;
+        private Integer humidity;
+        private String wind;
+        private String phenomeno;
 
         public LocalTime getEventTime() {
                 return eventTime;

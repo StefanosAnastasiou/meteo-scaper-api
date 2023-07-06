@@ -210,11 +210,11 @@ public class SQL {
                 Session sess = this.sessFactory.openSession();
                 Transaction tx = sess.beginTransaction();
                 Query ms = sess.createSQLQuery(INSERT_INTO_MEASUREMENT);
-                ms.setParameter("time", measurements.get(k).eventTime);
-                ms.setParameter("temperature", measurements.get(k).temperature);
-                ms.setParameter("humidity", measurements.get(k).humidity);
-                ms.setParameter("wind", measurements.get(k).wind);
-                ms.setParameter("phenomeno", measurements.get(k).phenomeno);
+                ms.setParameter("time", measurements.get(k).getEventTime());
+                ms.setParameter("temperature", measurements.get(k).getTemperature());
+                ms.setParameter("humidity", measurements.get(k).getHumidity());
+                ms.setParameter("wind", measurements.get(k).getWind());
+                ms.setParameter("phenomeno", measurements.get(k).getPhenomeno());
                 ms.setParameter("day_id", day_id);
                 ms.executeUpdate();
 
