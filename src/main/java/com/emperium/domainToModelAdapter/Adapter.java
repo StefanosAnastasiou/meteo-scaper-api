@@ -11,14 +11,16 @@ import java.util.List;
  */
 public class Adapter {
 
-    public com.emperium.model.City domainCityToModelAdapter(City domainCity, com.emperium.model.City modelCity, List<com.emperium.model.Day> days) {
+    public com.emperium.model.City domainCityToModelAdapter(City domainCity, List<com.emperium.model.Day> days) {
+        com.emperium.model.City modelCity = new com.emperium.model.City();
         modelCity.setName(domainCity.getName());
         modelCity.setDays(days);
 
         return modelCity;
     }
 
-    public com.emperium.model.Day domainDayToModelAdapter(Day domainDay, com.emperium.model.Day modelDay, List<com.emperium.model.Measurement> measurements) {
+    public com.emperium.model.Day domainDayToModelAdapter(Day domainDay, List<com.emperium.model.Measurement> measurements) {
+        com.emperium.model.Day modelDay = new com.emperium.model.Day();
         modelDay.setDay(domainDay.getDate());
         modelDay.setMeasurements(measurements);
 
