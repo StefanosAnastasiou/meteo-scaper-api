@@ -117,7 +117,7 @@ public class MeteoScraper implements Job {
                     ORMMeasurements.add(modelMeasurements);
                 });
 
-                modelDay = adapter.domainDayToModelAdapter(domainDay, new Day(), ORMMeasurements);
+                modelDay = adapter.domainDayToModelAdapter(domainDay, ORMMeasurements);
                 ORMDays.add(modelDay);
 
             });
