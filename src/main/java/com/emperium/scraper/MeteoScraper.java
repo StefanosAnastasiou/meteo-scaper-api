@@ -95,7 +95,7 @@ public class MeteoScraper implements Job {
         if(cityExists) {
             City city = cityDAO.getCityById(this.city_id);
 
-            modelDay = adapter.domainDayToModelAdapter(day, new Day(), new ArrayList<>());
+            modelDay = adapter.domainDayToModelAdapter(day, new ArrayList<>());
 
             day.getMeasurements().forEach(ms -> {
                 modelMeasurements = adapter.domainMeasurementsToModelAdapter(ms, new Measurement());
@@ -117,7 +117,7 @@ public class MeteoScraper implements Job {
                     ORMMeasurements.add(modelMeasurements);
                 });
 
-                modelDay = adapter.domainDayToModelAdapter(domainDay, new Day(), ORMMeasurements);
+                modelDay = adapter.domainDayToModelAdapter(domainDay, ORMMeasurements);
                 ORMDays.add(modelDay);
 
             });

@@ -19,7 +19,8 @@ public class Adapter {
         return modelCity;
     }
 
-    public com.emperium.model.Day domainDayToModelAdapter(Day domainDay, com.emperium.model.Day modelDay, List<com.emperium.model.Measurement> measurements) {
+    public com.emperium.model.Day domainDayToModelAdapter(Day domainDay, List<com.emperium.model.Measurement> measurements) {
+        com.emperium.model.Day modelDay = new com.emperium.model.Day();
         modelDay.setDay(domainDay.getDate());
         modelDay.setMeasurements(measurements);
 
