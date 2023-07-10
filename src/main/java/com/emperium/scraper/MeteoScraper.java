@@ -23,10 +23,8 @@ import java.util.logging.Level;
 public class MeteoScraper implements Job {
 
     private Adapter adapter = new Adapter();
-    private CityScraper cityScraper;
     private Logger logger = Logger.getLogger(ScrapeScheduler.class);
 
-    private City modelCity;
     private Day modelDay;
     private Measurement modelMeasurements;
 
@@ -45,13 +43,12 @@ public class MeteoScraper implements Job {
 
     private void initiate() {
         Mappings.cityMappings.keySet()
-                .stream()
-                .forEach( c -> scrapeAndSave(c));
+                .forEach(this::scrapeAndSave);
     }
 
     private void scrapeAndSave(int ck) {
         try {
-            cityScraper = new CityScraper(ck);
+            CityScraper cityScraper = new CityScraper(ck);
             cityScraper.scrapeCity();
 
             ct = cityScraper.getCity();
@@ -59,7 +56,7 @@ public class MeteoScraper implements Job {
             if(cityIsSet.test(ct.getName())) {
                 city_id = cityDAO.getCityId(ct.getName());
 
-                ct.getDays().stream().forEach(domainDay -> {
+                ct.getDays().forEach(domainDay -> {
 
                     if(dayIsSet.test(domainDay.getDate(), city_id)) {
                         int day_id = dayDAO.getDayId(domainDay.getDate(), city_id);
@@ -120,11 +117,11 @@ public class MeteoScraper implements Job {
                     ORMMeasurements.add(modelMeasurements);
                 });
 
-                modelDay = adapter.domainDayToModelAdapter(domainDay, ORMMeasurements);
+                modelDay = adapter.domainDayToModelAdapter(domainDay, new Day(), ORMMeasurements);
                 ORMDays.add(modelDay);
 
             });
-            modelCity  = adapter.domainCityToModelAdapter(ct, ORMDays);
+            City modelCity = adapter.domainCityToModelAdapter(ct, ORMDays);
 
             cityDAO.saveCity(modelCity);
         }
@@ -147,7 +144,6 @@ public class MeteoScraper implements Job {
         try {
             ScrapeScheduler.scheduler
                     .getCurrentlyExecutingJobs()
-                    .stream()
                     .forEach(job -> {
                         if (job.getJobDetail().getKey().getName().equals(ScrapeScheduler.SCRAPE_CITY_JOB)) {
                             try {
